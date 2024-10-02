@@ -38,7 +38,10 @@ int main(int argc, char* argv[])
         //}
 
         framebuffer.DrawRect(750, 10, 100, 100, color_t{ 255,255,255,255 });
-        framebuffer.DrawPoint(10, 10, color_t{ 255,255,255,255 });
+        for (int i = 0; i < 100; i++) {
+            framebuffer.DrawPoint(x,y,color_t{255,255,255,255});
+        }
+        //framebuffer.DrawPoint(10, 10, color_t{ 255,255,255,255 });
 
         framebuffer.Update();
         renderer->CopyFramebuffer(&framebuffer);
