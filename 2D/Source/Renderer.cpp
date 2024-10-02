@@ -1,6 +1,7 @@
 #include "Renderer.h"
+#include "Framebuffer.h"
 
-int Renderer::Initialize()
+bool Renderer::Initialize()
 {
     // initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -11,13 +12,15 @@ int Renderer::Initialize()
     return 0;
 }
 
-int Renderer::CreateWindow(int width, int height)
+bool Renderer::CreateWindow(int width, int height)
 {
-    SDL_Window* window = SDL_CreateWindow("Game Engine",
+    m_width = width;
+    m_height = height;
+   m_window = SDL_CreateWindow("Game Engine",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         width, height,
         SDL_WINDOW_SHOWN);
-    if (window == nullptr)
+    if (m_window == nullptr)
     {
         std::cerr << "Error creating SDL window: " << SDL_GetError() << std::endl;
         SDL_Quit();
@@ -25,6 +28,12 @@ int Renderer::CreateWindow(int width, int height)
     }
 
     // create renderer
-     renderer = SDL_CreateRenderer(window, -1, 0);
+     m_renderer = SDL_CreateRenderer(m_window, -1, 0);
      return 0;
 }
+
+void Renderer::CopyFramebuffer(const Framebuffer* framebuffer)
+{
+    SDL_RenderCopy(m_renderer, framebuffer->m_texture, NULL, NULL);
+}
+
