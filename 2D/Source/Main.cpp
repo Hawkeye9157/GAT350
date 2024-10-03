@@ -31,17 +31,28 @@ int main(int argc, char* argv[])
         framebuffer.Clear(color_t{0,0,0,255});
 
         int x = rand() % framebuffer.m_width;
+        int x2 = rand() % framebuffer.m_width;
+        int x3 = rand() % framebuffer.m_width;
         int y = rand() % framebuffer.m_height;
+        int y2 = rand() % framebuffer.m_height;
+        int y3 = rand() % framebuffer.m_height;
 
         //for (int i = 0; i < 100; i++) {
         //    framebuffer.DrawPoint(x, y, color_t{ 255,255,255,255 });
         //}
 
-        framebuffer.DrawRect(750, 10, 100, 100, color_t{ 255,255,255,255 });
-        for (int i = 0; i < 100; i++) {
-            framebuffer.DrawPoint(x,y,color_t{255,255,255,255});
-        }
-        //framebuffer.DrawPoint(10, 10, color_t{ 255,255,255,255 });
+        //framebuffer.DrawRect(750, 10, 100, 100, color_t{ 255,255,255,255 });
+        
+        //for (int i = 0; i < 100; i++) {
+        //    framebuffer.DrawPoint(x-2,y+3,color_t{255,255,255,255});
+        //    framebuffer.DrawPoint(x + 3,y,color_t{255,255,255,255});
+        //    framebuffer.DrawPoint(x+4,y - 2,color_t{255,255,255,255});
+        //    framebuffer.DrawPoint(x,y + 7,color_t{255,255,255,255});
+        //    framebuffer.DrawPoint(x,y,color_t{255,255,255,255});
+        //}
+       
+       framebuffer.DrawLine(x, y, x2, y2, color_t{ 255,0,0,255 });
+       framebuffer.DrawTriangle(x, y, x2, y2,x3,y3, color_t{ 0,0,255,255 });
 
         framebuffer.Update();
         renderer->CopyFramebuffer(&framebuffer);
