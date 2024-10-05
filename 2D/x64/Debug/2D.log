@@ -1,2 +1,3 @@
-﻿  Main.cpp
-  2D.vcxproj -> C:\Neumont\Q5\Graphics\GAT350\x64\Debug\2D.exe
+﻿Main.obj : error LNK2019: unresolved external symbol "public: void __cdecl Framebuffer::DrawLine(int,int,int,int,struct SDL_Color const &)" (?DrawLine@Framebuffer@@QEAAXHHHHAEBUSDL_Color@@@Z) referenced in function SDL_main
+Main.obj : error LNK2019: unresolved external symbol "public: void __cdecl Framebuffer::DrawTriangle(int,int,int,int,int,int,struct SDL_Color const &)" (?DrawTriangle@Framebuffer@@QEAAXHHHHHHAEBUSDL_Color@@@Z) referenced in function SDL_main
+C:\Neumont\Q5\Graphics\GAT350\x64\Debug\2D.exe : fatal error LNK1120: 2 unresolved externals

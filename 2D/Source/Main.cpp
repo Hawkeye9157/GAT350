@@ -59,7 +59,6 @@ int main(int argc, char* argv[])
 
         // show screen
         SDL_RenderPresent(renderer->m_renderer);
-
     }
     return 0;
 }
