@@ -20,6 +20,8 @@ public:
 	void DrawCircle(int xc, int yc, int radius, const color_t& color);
 	void DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const color_t& color);
 
+private:
+	void DrawBresCircle(int xc, int yc, int x, int y, const color_t& color);
 
 
 

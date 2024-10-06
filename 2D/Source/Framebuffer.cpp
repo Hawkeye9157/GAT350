@@ -1,5 +1,6 @@
 #include "Framebuffer.h"
 #include "Renderer.h"
+#include <SDL.h>
 
 //setup
 Framebuffer::Framebuffer(const Renderer& renderer, int width, int height)
@@ -144,7 +145,39 @@ void Framebuffer::DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, c
 	DrawLine(x3, y3, x1, y1, color);
 }
 
+void Framebuffer::DrawBresCircle(int xc, int yc, int x, int y, const color_t& color)
+{
+	//draws a point of the circle every 45 degrees 
+	DrawPoint(xc + x, yc + y, color);
+	DrawPoint(xc - x, yc + y, color);
+	DrawPoint(xc + x, yc - y, color);
+	DrawPoint(xc - x, yc - y, color);
+	DrawPoint(xc + y, yc + x, color);
+	DrawPoint(xc - y, yc + x, color);
+	DrawPoint(xc + y, yc - x, color);
+	DrawPoint(xc - y, yc - x, color);
+}
+
 void Framebuffer::DrawCircle(int xc, int yc, int radius, const color_t& color)
 {
+	int x = 0;
+	int y = radius;
+	int d = 3 - (2 * radius);
+	//draws 0,45,90,135,180,225,270,315 points
+	DrawBresCircle(xc, yc, x, y, color);
 
+	//increases rotates the degrees being drawn
+	//increases until x = radius
+	while (y >= x) {
+		if (d > 0) {
+			y--;
+			d = d + 4 * (x - y) + 10;
+		}
+		else {
+			d = d + (4 * x) + 6;
+		}
+		x++;
+
+		DrawBresCircle(xc, yc, x, y,color);
+	}
 }
