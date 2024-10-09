@@ -1,5 +1,7 @@
 #include "Framebuffer.h"
 #include "Renderer.h"
+#include "MathUtil.h"
+#include "Image.h"
 #include <SDL.h>
 
 //setup
@@ -178,6 +180,185 @@ void Framebuffer::DrawCircle(int xc, int yc, int radius, const color_t& color)
 		}
 		x++;
 
-		DrawBresCircle(xc, yc, x, y,color);
+		DrawBresCircle(xc, yc, x, y, color);
 	}
+}
+
+//curved lines
+void Framebuffer::DrawLinearCurve(int x1, int y1, int x2, int y2, const color_t& color)
+{
+	float dt = 1 / 10.0f;
+	float t1 = 0;
+	for (int i = 0; i < 10; i++) {
+		int sx1 = Lerp(x1, x2, t1);
+		int sy1 = Lerp(y1, y2, t1);
+
+		float t2 = t1 + dt;
+
+		int sx2 = Lerp(x1, x2, t2);
+		int sy2 = Lerp(y1, y2, t2);
+
+		t1 += dt;
+
+
+		DrawLine(sx1, sy1, sx2, sy2, color);
+	}
+	
+}
+
+void Framebuffer::DrawQuadraticCurve(int x1, int y1, int x2, int y2, int x3, int y3,  const color_t& color)
+{
+	float dt = 1 / 10.0f;
+	float t1 = 0;
+	for (int i = 0; i < 10; i++) {
+
+		int sx1, sy1;
+		QuadraticPoint(x1, y1, x2, y2, x3, y3, t1, sx1, sy1);
+
+		float t2 = t1 + dt;
+		int sx2, sy2;
+		QuadraticPoint(x1, y1, x2, y2, x3, y3, t2, sx2, sy2);
+
+		t1 += dt;
+		DrawLine(sx1, sy1, sx2, sy2, color);
+	}
+}
+
+void Framebuffer::DrawCubicCurve(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4,  const color_t& color)
+{
+	float dt = 1 / 10.0f;
+	float t1 = 0;
+	for (int i = 0; i < 10; i++) {
+
+		int sx1, sy1;
+		CubicPoint(x1, y1, x2, y2, x3, y3,x4,y4, t1, sx1, sy1);
+
+		float t2 = t1 + dt;
+		int sx2, sy2;
+		CubicPoint(x1, y1, x2, y2, x3, y3,x4,y4, t2, sx2, sy2);
+
+		t1 += dt;
+		DrawLine(sx1, sy1, sx2, sy2, color);
+	}
+}
+
+//images
+void Framebuffer::DrawImage(int x, int y, const Image& image)
+{
+	//check if off-screen
+	if (x < 0 || x => m_width) {
+		return;
+	}
+	if (y < 0 || y => m_height) {
+		return;
+	}
+
+	//iterate through image y
+	for (int iy = 0; iy < image.m_height; iy++) {
+		//set screen y
+		int sy = y + iy;
+
+		if (sy < 0 || sy > m_height) {
+			return;
+		}
+
+		//iterate through image x
+
+		for (int ix = 0; ix < image.m_width; ix++) {
+			//set screen x
+			int sx = x + ix;
+			if (sx < 0 || sx > m_width) {
+				break;
+			}
+			//TODO: fix this line
+			color_t color = image.m_buffer[ix + ((iy * image.m_width) - 1)];
+
+			if (color.a == 0) {
+				continue;
+			}
+			m_buffer[(sy * m_width) + sx] = color;
+		}
+	}
+}
+
+//needs testing
+void Framebuffer::CohenSutherLandClip(double x1, double y1, double x2, double y2)
+{
+	int code1 = ComputeCode(x1, y1);
+	int code2 = ComputeCode(x2, y2);
+
+	bool accept = false;
+
+	while (true) {
+		if (code1 == 0 && code2 == 0) {
+			accept = true;
+		}
+		else if (code1 && code2) {
+			break;
+		}
+		else {
+			int code_out = 0;
+			double x, y;
+
+			if (code1 != 0) {
+				code_out = code1;
+			}
+			else {
+				code_out = code2;
+			}
+
+			if (code_out && TOP) {
+				x = x1 + (x2 - x1) * (y_max - y1) / (y2 - y1);
+				y = y_max;
+			}
+			else if (code_out && BOTTOM) {
+				x = x1 + (x2 - x1) * (y_min - y1) / (y2 - y1);
+				y = y_min;
+			}
+			else if (code_out && RIGHT) {
+				y = y1 + (y2 - y1) * (x_max - x1) / (x2 - x1);
+				x = x_max;
+			}
+			else if (code_out && LEFT) {
+				y = y1 + (y2 - y1) * (x_min - x1) / (x2 - x1);
+				x = x_min;
+			}
+
+			if (code_out == code1) {
+				x1 = x;
+				y1 = y;
+				code1 = ComputeCode(x1, y1);
+			}
+			else {
+				x2 = x;
+				y2 = y;
+				code2 = ComputeCode(x2, y2);
+			}
+		}
+	}
+	if (accept) {
+		std::cout << "Line accepted from " << x1 << ", " << y1 << " to " << x2 << ", " << y2 << std::endl;
+	}
+	else {
+		std::cout << "nah" << std::endl;
+	}
+}
+
+int Framebuffer::ComputeCode(double x, double y)
+{
+	int code = INSIDE;
+
+	if (x < x_min) {
+		code = LEFT;
+	}
+	else if (x > x_max) {
+		code = RIGHT;
+	}
+	if (y < y_min) {
+		code = BOTTOM;
+	}
+	else if (y > y_max) {
+		code = TOP;
+	}
+	return code;
 }

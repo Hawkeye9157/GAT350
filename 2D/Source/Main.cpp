@@ -2,6 +2,8 @@
 #include <iostream>
 #include "Renderer.h"
 #include "Framebuffer.h"
+#include "MathUtil.h"
+#include "Image.h"
 
 int main(int argc, char* argv[])
 {
@@ -11,6 +13,9 @@ int main(int argc, char* argv[])
     renderer->CreateWindow(800, 600);
     
     Framebuffer framebuffer(*renderer,800, 600);
+
+    Image image;
+    image.Load("image.png");
 
     bool quit = false;
     while (!quit)
@@ -30,30 +35,30 @@ int main(int argc, char* argv[])
 
         framebuffer.Clear(color_t{0,0,0,255});
 
-        int x = rand() % framebuffer.m_width;
+        int x1 = rand() % framebuffer.m_width;
         int x2 = rand() % framebuffer.m_width;
         int x3 = rand() % framebuffer.m_width;
-        int y = rand() % framebuffer.m_height;
+        int y1 = rand() % framebuffer.m_height;
         int y2 = rand() % framebuffer.m_height;
         int y3 = rand() % framebuffer.m_height;
+        int mx, my;
+        SDL_GetMouseState(&mx, &my);
+     
+       //framebuffer.DrawLine(x, y, x2, y2, color_t{ 255,0,0,255 });
+       //framebuffer.DrawTriangle(x + 3, y + 30, x2 - 40, y2 + 25,x3,y3, color_t{ 0,0,255,255 });
+       //framebuffer.DrawCircle(400, 300, 100, color_t{ 255,255,255,255 });
+       //framebuffer.DrawLinearCurve(100, 100, 200, 200, color_t{ 255,0,255,255 });
+       //framebuffer.DrawQuadraticCurve(100, 200, 200, 100, 300, 200, color_t{ 255,255,0,255 });
+       framebuffer.DrawCubicCurve(100, 200, 100, 100, 200, 100, 200, 200, color_t{ 0,255,255,255 });
 
-        //for (int i = 0; i < 100; i++) {
-        //    framebuffer.DrawPoint(x, y, color_t{ 255,255,255,255 });
-        //}
+       int ticks = SDL_GetTicks();
+       float time = ticks * 0.01f;
+       int x, y;
+       float t = std::abs(std::sin(time));
+       CubicPoint(100, 200, 100, 100, 200, 100, 200, 200, t, x, y);
+       framebuffer.DrawRect(x - 20,y - 20,40,40,color_t{255,255,255,255});
 
-        //framebuffer.DrawRect(750, 10, 100, 100, color_t{ 255,255,255,255 });
-        
-        //for (int i = 0; i < 100; i++) {
-        //    framebuffer.DrawPoint(x-2,y+3,color_t{255,255,255,255});
-        //    framebuffer.DrawPoint(x + 3,y,color_t{255,255,255,255});
-        //    framebuffer.DrawPoint(x+4,y - 2,color_t{255,255,255,255});
-        //    framebuffer.DrawPoint(x,y + 7,color_t{255,255,255,255});
-        //    framebuffer.DrawPoint(x,y,color_t{255,255,255,255});
-        //}
-       
-       framebuffer.DrawLine(x, y, x2, y2, color_t{ 255,0,0,255 });
-       framebuffer.DrawTriangle(x + 3, y + 30, x2 - 40, y2 + 25,x3,y3, color_t{ 0,0,255,255 });
-        framebuffer.DrawCircle(400, 300, 100, color_t{ 255,255,255,255 });
+       framebuffer.DrawImage(400, 300, image);
 
         framebuffer.Update();
         renderer->CopyFramebuffer(&framebuffer);
