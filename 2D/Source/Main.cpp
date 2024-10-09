@@ -4,6 +4,7 @@
 #include "Framebuffer.h"
 #include "MathUtil.h"
 #include "Image.h"
+#include "PostProcess.h"
 
 int main(int argc, char* argv[])
 {
@@ -15,7 +16,8 @@ int main(int argc, char* argv[])
     Framebuffer framebuffer(*renderer,800, 600);
 
     Image image;
-    image.Load("image.png");
+    //image.Load("image.png");
+    image.Load("view.jpg");
 
     bool quit = false;
     while (!quit)
@@ -49,17 +51,21 @@ int main(int argc, char* argv[])
        //framebuffer.DrawCircle(400, 300, 100, color_t{ 255,255,255,255 });
        //framebuffer.DrawLinearCurve(100, 100, 200, 200, color_t{ 255,0,255,255 });
        //framebuffer.DrawQuadraticCurve(100, 200, 200, 100, 300, 200, color_t{ 255,255,0,255 });
-       framebuffer.DrawCubicCurve(100, 200, 100, 100, 200, 100, 200, 200, color_t{ 0,255,255,255 });
+       //framebuffer.DrawCubicCurve(100, 200, 100, 100, 200, 100, 200, 200, color_t{ 0,255,255,255 });
 
-       int ticks = SDL_GetTicks();
-       float time = ticks * 0.01f;
-       int x, y;
-       float t = std::abs(std::sin(time));
-       CubicPoint(100, 200, 100, 100, 200, 100, 200, 200, t, x, y);
-       framebuffer.DrawRect(x - 20,y - 20,40,40,color_t{255,255,255,255});
+       //int ticks = SDL_GetTicks();
+       //float time = ticks * 0.01f;
+       //int x, y;
+       //float t = std::abs(std::sin(time));
+       //CubicPoint(100, 200, 100, 100, 200, 100, 200, 200, t, x, y);
+       //framebuffer.DrawRect(x - 20,y - 20,40,40,color_t{255,255,255,255});
 
-       framebuffer.DrawImage(400, 300, image);
+       framebuffer.DrawImage(100, 100, image);
+       framebuffer.DrawImage(200, 200, image);
 
+       //PostProcess::Invert(framebuffer.m_buffer);
+       //PostProcess::Monochrome(framebuffer.m_buffer);
+       //PostProcess::Brightness(framebuffer.m_buffer, -125);
         framebuffer.Update();
         renderer->CopyFramebuffer(&framebuffer);
 

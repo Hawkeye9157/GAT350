@@ -246,10 +246,7 @@ void Framebuffer::DrawCubicCurve(int x1, int y1, int x2, int y2, int x3, int y3,
 void Framebuffer::DrawImage(int x, int y, const Image& image)
 {
 	//check if off-screen
-	if (x < 0 || x => m_width) {
-		return;
-	}
-	if (y < 0 || y => m_height) {
+	if (x < 0 || x >= m_width || y < 0 || y >= m_height) {
 		return;
 	}
 
@@ -258,8 +255,8 @@ void Framebuffer::DrawImage(int x, int y, const Image& image)
 		//set screen y
 		int sy = y + iy;
 
-		if (sy < 0 || sy > m_height) {
-			return;
+		if (sy < 0 || sy >= m_height) {
+			continue;
 		}
 
 		//iterate through image x
@@ -267,16 +264,16 @@ void Framebuffer::DrawImage(int x, int y, const Image& image)
 		for (int ix = 0; ix < image.m_width; ix++) {
 			//set screen x
 			int sx = x + ix;
-			if (sx < 0 || sx > m_width) {
-				break;
+			if (sx < 0 || sx >= m_width) {
+				continue;
 			}
-			//TODO: fix this line
-			color_t color = image.m_buffer[ix + ((iy * image.m_width) - 1)];
+			
+			color_t color = image.m_buffer[ix + (iy * image.m_width)];
 
 			if (color.a == 0) {
 				continue;
 			}
-			m_buffer[(sy * m_width) + sx] = color;
+			m_buffer[sx + sy * m_width] = color;
 		}
 	}
 }
@@ -298,7 +295,8 @@ void Framebuffer::CohenSutherLandClip(double x1, double y1, double x2, double y2
 		}
 		else {
 			int code_out = 0;
-			double x, y;
+			double x = 0;
+			double y = 0;
 
 			if (code1 != 0) {
 				code_out = code1;

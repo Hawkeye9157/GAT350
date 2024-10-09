@@ -26,6 +26,8 @@ public:
 
 	void DrawImage(int x, int y, const class Image& image);
 
+	std::vector<color_t>& GetBuffer() { return m_buffer; };
+
 private:
 	void DrawBresCircle(int xc, int yc, int x, int y, const color_t& color);
 	void CohenSutherLandClip(double x1, double y1, double x2, double y2); // still need to write
