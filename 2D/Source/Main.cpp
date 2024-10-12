@@ -17,6 +17,7 @@ int main(int argc, char* argv[])
 
     Image image;
     //image.Load("image.png");
+    //image.Load("cursed.png");
     image.Load("view.jpg");
 
     bool quit = false;
@@ -32,40 +33,27 @@ int main(int argc, char* argv[])
             }
         }
         // clear screen
-        //SDL_SetRenderDrawColor(renderer->m_renderer, 0, 0, 0, 0);
-        //SDL_RenderClear(renderer->m_renderer);
-
         framebuffer.Clear(color_t{0,0,0,255});
 
-        int x1 = rand() % framebuffer.m_width;
-        int x2 = rand() % framebuffer.m_width;
-        int x3 = rand() % framebuffer.m_width;
-        int y1 = rand() % framebuffer.m_height;
-        int y2 = rand() % framebuffer.m_height;
-        int y3 = rand() % framebuffer.m_height;
+        //mouse input
         int mx, my;
         SDL_GetMouseState(&mx, &my);
-     
-       //framebuffer.DrawLine(x, y, x2, y2, color_t{ 255,0,0,255 });
-       //framebuffer.DrawTriangle(x + 3, y + 30, x2 - 40, y2 + 25,x3,y3, color_t{ 0,0,255,255 });
-       //framebuffer.DrawCircle(400, 300, 100, color_t{ 255,255,255,255 });
-       //framebuffer.DrawLinearCurve(100, 100, 200, 200, color_t{ 255,0,255,255 });
-       //framebuffer.DrawQuadraticCurve(100, 200, 200, 100, 300, 200, color_t{ 255,255,0,255 });
-       //framebuffer.DrawCubicCurve(100, 200, 100, 100, 200, 100, 200, 200, color_t{ 0,255,255,255 });
 
-       //int ticks = SDL_GetTicks();
-       //float time = ticks * 0.01f;
-       //int x, y;
-       //float t = std::abs(std::sin(time));
-       //CubicPoint(100, 200, 100, 100, 200, 100, 200, 200, t, x, y);
-       //framebuffer.DrawRect(x - 20,y - 20,40,40,color_t{255,255,255,255});
-
-       framebuffer.DrawImage(100, 100, image);
-       framebuffer.DrawImage(200, 200, image);
+       framebuffer.DrawImage(10, 10, image);
 
        //PostProcess::Invert(framebuffer.m_buffer);
        //PostProcess::Monochrome(framebuffer.m_buffer);
+       //PostProcess::ColorBalance(framebuffer.m_buffer,50,30,20);
        //PostProcess::Brightness(framebuffer.m_buffer, -125);
+       //PostProcess::Threshold(framebuffer.m_buffer, 125);
+       //PostProcess::Noise(framebuffer.m_buffer, 55);
+       PostProcess::Posterization(framebuffer.m_buffer, 50);
+       
+       //PostProcess::GaussianBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+       //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+       //PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height,1);
+       
+
         framebuffer.Update();
         renderer->CopyFramebuffer(&framebuffer);
 
