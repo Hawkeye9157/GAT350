@@ -17,8 +17,15 @@ int main(int argc, char* argv[])
 
     Image image;
     //image.Load("image.png");
+    //image.Load("colors.png");
     //image.Load("cursed.png");
     image.Load("view.jpg");
+
+    Image imageAlpha;
+    //imageAlpha.Load("colors.png");
+    imageAlpha.Load("image.png");
+    PostProcess::Alpha(imageAlpha.m_buffer, 32);
+    PostProcess::Monochrome(imageAlpha.m_buffer);
 
     bool quit = false;
     while (!quit)
@@ -38,8 +45,10 @@ int main(int argc, char* argv[])
         //mouse input
         int mx, my;
         SDL_GetMouseState(&mx, &my);
+        SetBlendMode(BlendMode::Normal);
+        framebuffer.DrawImage(10, 10, image);
 
-       framebuffer.DrawImage(10, 10, image);
+
 
        //PostProcess::Invert(framebuffer.m_buffer);
        //PostProcess::Monochrome(framebuffer.m_buffer);
@@ -47,11 +56,15 @@ int main(int argc, char* argv[])
        //PostProcess::Brightness(framebuffer.m_buffer, -125);
        //PostProcess::Threshold(framebuffer.m_buffer, 125);
        //PostProcess::Noise(framebuffer.m_buffer, 55);
-       PostProcess::Posterization(framebuffer.m_buffer, 50);
+       //PostProcess::Posterization(framebuffer.m_buffer, 50);
+       //SetBlendMode(BlendMode::Additive);
+       //framebuffer.DrawImage(mx, my, imageAlpha);
        
        //PostProcess::GaussianBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+       //PostProcess::BoxBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
        //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
-       //PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height,1);
+       //PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+       PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height,1);
        
 
         framebuffer.Update();

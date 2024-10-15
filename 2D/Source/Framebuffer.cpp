@@ -2,6 +2,7 @@
 #include "Renderer.h"
 #include "MathUtil.h"
 #include "Image.h"
+#include "Color.h"
 #include <SDL.h>
 
 //setup
@@ -36,10 +37,17 @@ void Framebuffer::Clear(const color_t& color)
 //shape draws
 void Framebuffer::DrawPoint(int x, int y, const color_t& color)
 {
+	color_t& dest = m_buffer[x + (y * m_width)];
+	dest = ColorBlend(color, dest);
+}
+
+void Framebuffer::DrawPointClip(int x, int y, const color_t& color)
+{
 	if (x < 0 || x >= m_width)  return;
 	if (y < 0 || y >= m_height) return;
 
-	m_buffer[x + (y * m_width)] = color;
+	color_t& dest = m_buffer[x + (y * m_width)];
+	dest = ColorBlend(color, dest);
 }
 
 void Framebuffer::DrawRect(int x, int y, int w, int h, const color_t& color)
@@ -273,7 +281,7 @@ void Framebuffer::DrawImage(int x, int y, const Image& image)
 			if (color.a == 0) {
 				continue;
 			}
-			m_buffer[sx + sy * m_width] = color;
+			DrawPoint(sx, sy, color);
 		}
 	}
 }

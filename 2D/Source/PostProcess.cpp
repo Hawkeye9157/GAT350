@@ -67,6 +67,13 @@ void PostProcess::Posterization(std::vector<color_t>& buffer, uint8_t levels)
 	});
 }
 
+void PostProcess::Alpha(std::vector<color_t>& buffer, uint8_t alpha)
+{
+	std::for_each(buffer.begin(), buffer.end(), [alpha](auto& c) {
+		c.a = alpha;
+	});
+}
+
 void PostProcess::BoxBlur(std::vector<color_t>& buffer, int width, int height)
 {
 	std::vector<color_t> source = buffer;
@@ -228,5 +235,44 @@ void PostProcess::Edge(std::vector<color_t>& buffer, int width, int height, int 
 		color.b = c;
 	}
 }
+
+void PostProcess::Emboss(std::vector<color_t>& buffer, int width, int height)
+{
+	std::vector<color_t>& source = buffer;
+	int k[3][3] = {
+		{-2,-1, 0},
+		{-1, 0, 1},
+		{ 0, 1, 2}
+	};
+
+	for (int i = 0; i < buffer.size(); i++) {
+		// % 5 :
+		int x = i % width;
+		int y = i / width;
+
+		if (x < 1 || x + 1 >= width - 1 || y < 1 || y + 1 >= height - 1) continue;
+
+		int r = 0;
+		int g = 0;
+		int b = 0;
+
+		for (int iy = 0; iy < 3; iy++) {
+			for (int ix = 0; ix < 3; ix++) {
+				color_t pixel = source[(x + ix - 1) + (y + iy) * width];
+				int weight = k[iy][ix];
+
+				r += pixel.r * weight;
+				g += pixel.g * weight;
+				b += pixel.b * weight;
+			}
+		}
+		color_t& color = buffer[i];
+		color.r = static_cast<uint8_t>(Clamp<int>(r, 0, 255));
+		color.g = static_cast<uint8_t>(Clamp<int>(g, 0, 255));
+		color.b = static_cast<uint8_t>(Clamp<int>(b, 0, 255));
+	}
+
+}
+
 
 
