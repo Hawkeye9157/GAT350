@@ -1,4 +1,5 @@
 #include "Color.h"
+#include <cassert>
 
 color_t(*blend_func)(const color_t& src, const color_t& dest);
 
@@ -38,12 +39,12 @@ color_t MultiplyBlend(const color_t& src, const color_t& dest)
 	color.g = (src.g * dest.g) >> 8;
 	color.b = (src.b * dest.b) >> 8;
 
-	color.a = src.a;
+	color.a = 255;
 	return color;
 }
 
 color_t ColorBlend(const color_t& src, const color_t& dest) {
-
+	assert(blend_func);
 	return blend_func(src, dest);
 }
 
@@ -60,7 +61,7 @@ void SetBlendMode(BlendMode blendMode) {
 		blend_func = AdditiveBlend;
 		break;
 	case BlendMode::Multiply:
-		//blend_func = MultiplyBlend;
+		blend_func = MultiplyBlend;
 		break;
 	default:
 		break;

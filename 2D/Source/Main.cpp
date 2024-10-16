@@ -5,6 +5,10 @@
 #include "MathUtil.h"
 #include "Image.h"
 #include "PostProcess.h"
+#include "Model.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm.hpp>
+
 
 int main(int argc, char* argv[])
 {
@@ -23,10 +27,14 @@ int main(int argc, char* argv[])
 
     Image imageAlpha;
     //imageAlpha.Load("colors.png");
-    imageAlpha.Load("image.png");
-    PostProcess::Alpha(imageAlpha.m_buffer, 32);
-    PostProcess::Monochrome(imageAlpha.m_buffer);
+    imageAlpha.Load("cursed.png");
+    
+    
 
+    vertices_t vertices = { {-5,5,0},{5,5,0},{-5,-5,0} };
+    Model model(vertices, {255,0,0,255});
+    
+    SetBlendMode(BlendMode::Normal);
     bool quit = false;
     while (!quit)
     {
@@ -40,31 +48,51 @@ int main(int argc, char* argv[])
             }
         }
         // clear screen
-        framebuffer.Clear(color_t{0,0,0,255});
+        framebuffer.Clear(color_t{128,128,128,255});
 
+        
+        int ticks = SDL_GetTicks();
+        float time = ticks * .001f;
+        float t = std::abs(std::sin(time));
+#pragma region PostProcess
         //mouse input
         int mx, my;
         SDL_GetMouseState(&mx, &my);
-        SetBlendMode(BlendMode::Normal);
+        SetBlendMode(BlendMode::Alpha);
         framebuffer.DrawImage(10, 10, image);
+        
+        //PostProcess::Invert(framebuffer.m_buffer);
+        PostProcess::Monochrome(framebuffer.m_buffer);
+        //PostProcess::ColorBalance(framebuffer.m_buffer,50,30,20);
+        PostProcess::Brightness(framebuffer.m_buffer, 50);
+        //PostProcess::Threshold(framebuffer.m_buffer, 125);
+        PostProcess::Noise(framebuffer.m_buffer, 15);
+        //PostProcess::Posterization(framebuffer.m_buffer, 50);
+        //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        SetBlendMode(BlendMode::Additive);
+        framebuffer.DrawImage(mx, my, imageAlpha);
+
+        PostProcess::Brightness(framebuffer.m_buffer, -125);
+        PostProcess::Monochrome(framebuffer.m_buffer);
+        //PostProcess::GaussianBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::BoxBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height,1);
+#pragma endregion
+
+        int r = 10;
+
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
+        glm::mat4 translate = glm::translate(modelMatrix, glm::vec3(340.0f, 240.0f, 0.0f));
+        glm::mat4 scale = glm::scale(modelMatrix, glm::vec3(r, r, r));
+        glm::mat4 rotate = glm::rotate(modelMatrix, glm::radians((time * 3) * 90), glm::vec3(1, 1, 1));
+
+        modelMatrix = translate * scale * rotate;
 
 
 
-       //PostProcess::Invert(framebuffer.m_buffer);
-       //PostProcess::Monochrome(framebuffer.m_buffer);
-       //PostProcess::ColorBalance(framebuffer.m_buffer,50,30,20);
-       //PostProcess::Brightness(framebuffer.m_buffer, -125);
-       //PostProcess::Threshold(framebuffer.m_buffer, 125);
-       //PostProcess::Noise(framebuffer.m_buffer, 55);
-       //PostProcess::Posterization(framebuffer.m_buffer, 50);
-       //SetBlendMode(BlendMode::Additive);
-       //framebuffer.DrawImage(mx, my, imageAlpha);
-       
-       //PostProcess::GaussianBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
-       //PostProcess::BoxBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
-       //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
-       //PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
-       PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height,1);
+        //model.Draw(framebuffer,modelMatrix);
        
 
         framebuffer.Update();
