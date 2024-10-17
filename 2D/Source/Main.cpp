@@ -1,5 +1,3 @@
-#include <SDL.h>
-#include <iostream>
 #include "Renderer.h"
 #include "Framebuffer.h"
 #include "MathUtil.h"
@@ -9,13 +7,18 @@
 #include "Transform.h"
 #include "ETime.h"
 #include "Input.h"
+#include "Camera.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
+#include <SDL.h>
+#include <iostream>
 
 
 int main(int argc, char* argv[])
 {
 #pragma region Initialize
+
     Time time;
 
     Renderer* renderer = new Renderer;
@@ -23,6 +26,10 @@ int main(int argc, char* argv[])
     renderer->CreateWindow(800, 600);
 
     Framebuffer framebuffer(*renderer, 800, 600);
+    Camera camera(800, 600);
+    camera.SetView(glm::vec3{0,0,-50},glm::vec3{0});
+    camera.Setprojection(90.0f,800.0f / 600.0f,0.1f,200.0f);
+    Transform cameraTransform{ {0,0,-50} };
 
     Input input;
     input.Initialize();
@@ -42,15 +49,15 @@ int main(int argc, char* argv[])
 #pragma region Model_Init
     vertices_t vertices = { {-5,5,0},{5,5,0},{-5,-5,0} };
     Model model(vertices, { 255,0,0,255 });
-    Transform transform{ {240,240,0},{0,0,90},{6,6,6} };
+    Transform transform{ {0,0,0},{0,0,15},{2,2,2} };
 #pragma endregion
-
 
     bool quit = false;
     while (!quit)
     {
         time.Tick();
         input.Update();
+#pragma region SDL_EVENT
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
@@ -60,6 +67,7 @@ int main(int argc, char* argv[])
                 quit = true;
             }
         }
+#pragma endregion
         // clear screen
         framebuffer.Clear(color_t{128,128,128,255});
 
@@ -96,13 +104,16 @@ int main(int argc, char* argv[])
         if (input.GetKeyDown(SDL_SCANCODE_LEFT)) {direction.x = -1;}
         if (input.GetKeyDown(SDL_SCANCODE_UP)) {direction.y = -1;}
         if (input.GetKeyDown(SDL_SCANCODE_DOWN)) {direction.y = 1;}
-        if (input.GetKeyDown(SDL_SCANCODE_K)) {direction.z = 1;}
-        if (input.GetKeyDown(SDL_SCANCODE_L)) {direction.z = -1;}
-        transform.position += direction * 100.0f * time.GetDeltaTime();
+        if (input.GetKeyDown(SDL_SCANCODE_K)) {direction.z = -1;}
+        if (input.GetKeyDown(SDL_SCANCODE_L)) {direction.z = 1;}
+        
+        cameraTransform.position += direction * 100.0f * time.GetDeltaTime();
+        camera.SetView(cameraTransform.position, cameraTransform.position + glm::vec3{ 0,0,1 });
+        
         transform.rotation.z += 90 * time.GetDeltaTime();
         transform.rotation.y += 90 * time.GetDeltaTime();
         transform.rotation.x += 90 * time.GetDeltaTime();
-        model.Draw(framebuffer,transform.GetMatrix());
+        model.Draw(framebuffer,transform.GetMatrix(),camera);
 #pragma endregion
        
 
