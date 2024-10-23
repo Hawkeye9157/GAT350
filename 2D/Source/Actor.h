@@ -13,6 +13,8 @@ public:
 
 	void Draw(class Framebuffer& framebuffer, const class Camera& camera);
 
+	void SetColor(color_t color) { m_model->SetColor(color); }
+
 private:
 	Transform m_transform;
 	std::shared_ptr<Model> m_model;

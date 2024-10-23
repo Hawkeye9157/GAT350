@@ -26,6 +26,9 @@ glm::vec2 Camera::ToScreen(const glm::vec3& position) const
 	glm::vec4 clip = m_projection * glm::vec4{ position,1 };
 	glm::vec3 ndc = clip / clip.w;	
 
+	if (clip.w == 0) {
+		return glm::vec2(-1, -1);
+	}
 	float x = (ndc.x + 1) * (m_width * 0.5f);
 	float y = (ndc.y + 1) * (m_height * 0.5f);
 
