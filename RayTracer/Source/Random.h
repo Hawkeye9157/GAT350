@@ -15,3 +15,26 @@ inline glm::vec2 randomOnUnitCircle()
 	float angle = randomf(0, 360);
 	return glm::vec2{ glm::cos(glm::radians(angle)), glm::sin(glm::radians(angle))};
 }
+
+inline glm::vec3 random(const glm::vec3& v1, const glm::vec3& v2) {
+	glm::vec3 rand;
+	if (v1.x > v2.x) {
+		rand.x = randomf(v2.x, v1.x);
+	}
+	else {
+		rand.x = randomf(v1.x, v2.x);
+	}
+	if (v1.y > v2.y) {
+		rand.y = randomf(v2.y, v1.y);
+	}
+	else {
+		rand.y = randomf(v1.y, v2.y);
+	}
+	if (v1.z > v2.z) {
+		rand.z = randomf(v2.z, v1.z);
+	}
+	else {
+		rand.z = randomf(v1.z, v2.z);
+	}
+	return rand;
+}

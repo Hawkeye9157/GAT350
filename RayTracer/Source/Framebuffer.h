@@ -29,6 +29,8 @@ public:
 	void DrawImage(int x, int y, const class Image& image);
 
 	std::vector<color_t>& GetBuffer() { return m_buffer; };
+	int GetWidth() { return m_width; }
+	int GetHeight() { return m_height; }
 
 private:
 	void DrawBresCircle(int xc, int yc, int x, int y, const color_t& color);
