@@ -4,19 +4,31 @@
 #include "Scene.h"
 #include "Random.h"
 
-color3_t Tracer::Trace(Scene& scene, const ray_t& ray)
+color3_t Tracer::Trace(Scene& scene, const ray_t& ray,float minDistance, float maxDistance)
 {
+	raycastHit_t raycastHit;
+	float closestDistance = maxDistance;
+	bool isHit = false;
 
 	for (auto& object : scene.m_objects) {
-		if (object->Hit(ray)) {
-			return object.get()->GetMaterial()->GetColor();
+		if (object->Hit(ray,raycastHit,minDistance,closestDistance)) {
+			isHit = true;
+			closestDistance = raycastHit.distance;
+			raycastHit.material = object.get()->GetMaterial();
+			// return object.get()->GetMaterial()->GetColor();
+		}
+	}
+	if (isHit) {
+		color3_t attentuation;
+		ray_t scatter;
+		if (raycastHit.material.lock()->Scatter(ray, raycastHit, attentuation, scatter)) {
+			return attentuation * Trace(scene, scatter, minDistance, maxDistance);
 		}
 	}
 
-	color3_t color{ 0 };
 	glm::vec3 direction = glm::normalize(ray.direction);
 	float t = (direction.y + 1) * 0.5f;
-	color = Lerp(color3_t{ 1,1,1 }, color3_t{ 0,.5,.75}, t);
+	color3_t color = Lerp(color3_t{ 1,1,1 }, color3_t{ 0,.5,.75}, t);
 
 	return color;
 	//return color3_t(randomf(1), randomf(1), randomf(1));

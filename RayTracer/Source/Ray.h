@@ -14,7 +14,7 @@ struct ray_t {
 	glm::vec3 operator * (float t) const { return origin + direction * t; };
 
 
-	std::weak_ptr<class Material> material;
+	
 };
 
 struct raycastHit_t {
@@ -22,5 +22,5 @@ struct raycastHit_t {
 	glm::vec3 point{ 0 };
 	glm::vec3 normal{ 0 };
 
-	
+	std::weak_ptr<class Material> material;
 };

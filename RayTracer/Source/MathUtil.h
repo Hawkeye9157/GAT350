@@ -45,3 +45,11 @@
 	inline bool approx(float v1, float v2) {
 		return (std::abs(v2 - v1)) < FLT_EPSILON;
 	}
+
+	inline float Dot(const glm::vec3& v1, const glm::vec3& v2) {
+		return (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z);
+	}
+
+	inline glm::vec3 Reflect(const glm::vec3& i, const glm::vec3& n) {
+		return i - (n * Dot(n, i)) * 2.0f;
+	}
