@@ -3,6 +3,7 @@
 #include "Ray.h"
 #include "Camera.h"
 #include "Tracer.h"
+#include <iostream>
 
 void Scene::Render(Framebuffer& framebuffer, const Camera& camera)
 {
@@ -16,5 +17,6 @@ void Scene::Render(Framebuffer& framebuffer, const Camera& camera)
 			//color4_t color2 = { 0.75f,0.25f,0.5f,1 };
 			framebuffer.DrawPoint(x, y, ColorConvert(color));
 		}
+		std::cout << "y: " << y << std::endl;
 	}
 }

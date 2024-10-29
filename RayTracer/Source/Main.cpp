@@ -14,6 +14,7 @@
 #include "Scene.h"
 #include "Sphere.h"
 #include "Plane.h"
+#include "Material.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
@@ -50,8 +51,8 @@ int main(int argc, char* argv[])
 
     std::shared_ptr<Material> gray = std::make_shared<Lambertian>(color3_t{ 0.5f });
     std::shared_ptr<Material> red = std::make_shared<Lambertian>(color3_t{ 1, 0, 0 });
-    std::shared_ptr<Material> blue = std::make_shared<Lambertian>(color3_t{ 0, 0, 1 });
-    std::shared_ptr<Material> something = std::make_shared<Lambertian>(color3_t{ randomf(1), randomf(1), randomf(1)});
+    std::shared_ptr<Material> blue = std::make_shared<Metal>(color3_t{ 0, 0, 1 },0.7f);
+    std::shared_ptr<Material> something = std::make_shared<Metal>(color3_t{ randomf(1), randomf(1), randomf(1)},0.3f);
 
     std::vector<std::shared_ptr<Material>> mats;
     mats.push_back(gray);
