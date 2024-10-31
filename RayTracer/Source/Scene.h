@@ -8,7 +8,7 @@ public:
 	Scene() = default;
 
 	void AddObject(std::unique_ptr<class SceneObject> object) { m_objects.push_back(std::move(object)); }
-	void Render(class Framebuffer& framebuffer, const class Camera& camera);
+	void Render(class Framebuffer& framebuffer, const class Camera& camera,int samples = 10,int depth = 5);
 
 	friend class Tracer;
 	
