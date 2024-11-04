@@ -4,11 +4,15 @@
 #include "Camera.h"
 #include "Tracer.h"
 #include "Random.h"
+#include "ETime.h"
 #include <iostream>
 
 void Scene::Render(Framebuffer& framebuffer, const Camera& camera,int samples,int depth)
 {
+	Time frametimer;
+	Time lineTime;
 	for (int y = 0; y < framebuffer.GetHeight(); y++) {
+		lineTime.Reset();
 		for (int x = 0; x < framebuffer.GetWidth(); x++) {
 			color3_t color{ 0 };
 			for (int i = 0; i < samples; i++) {
@@ -25,6 +29,7 @@ void Scene::Render(Framebuffer& framebuffer, const Camera& camera,int samples,in
 			color = color / (float)samples;
 			framebuffer.DrawPoint(x, y, ColorConvert(color));
 		}
-		std::cout << "y: " << y << std::endl;
+		std::cout << "y: " << y << "  Time: " << lineTime.GetElapsedTime() << std::endl;
 	}
+	std::cout << "Frame-Time: " << frametimer.GetElapsedTime() << std::endl;
 }
