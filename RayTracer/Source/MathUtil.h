@@ -62,7 +62,7 @@
 		float yuh_uh = true;
 		glm::vec3 ni = glm::normalize(i);
 		float cosine = glm::dot(ni, n);
-		float dis = (1 - ri * ri) + (1 - cosine * cosine);
+		float dis = 1 - ( ri * ri) * (1 - cosine * cosine);
 		if (dis >= 0) {
 			refract = ri * (ni - (n * cosine)) - (n * glm::sqrt(dis));
 			return yuh_uh;

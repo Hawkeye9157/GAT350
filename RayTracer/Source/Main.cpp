@@ -15,6 +15,7 @@
 #include "Sphere.h"
 #include "Plane.h"
 #include "Material.h"
+#include "Triangle.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
@@ -42,7 +43,7 @@ int main(int argc, char* argv[])
 
     std::shared_ptr<Material> mat = std::make_shared<Lambertian>(color3_t{ 0.5f,0.5f,0.5f });
     auto plane = std::make_unique<Plane>(glm::vec3{ 0,0,0 }, glm::vec3{ 0,1,1 }, mat);
-    scene.AddObject(std::move(plane));
+    //scene.AddObject(std::move(plane));
 
     std::shared_ptr<Material> material = std::make_shared<Lambertian>(color3_t{ 0,0,1 });
     auto object = std::make_unique<Sphere>(glm::vec3{ 0,0,0 }, 5.0f, material);
@@ -68,9 +69,13 @@ int main(int argc, char* argv[])
 
     for (int i = 0; i < 20; i++) {
         auto object = std::make_unique<Sphere>(random(glm::vec3{ -10 }, glm::vec3{ 10 }), randomf(3.0f), mats.at((int)random(0,mats.size())));
-        scene.AddObject(std::move(object));
+        //scene.AddObject(std::move(object));
     }
-
+    auto triangle = std::make_unique<Triangle>(glm::vec3{ -2,2,0 }, glm::vec3{ 0,4,0 }, glm::vec3{ 2,2,0 }, red);
+    auto model = std::make_unique<Model>(gray);
+   // model.get()->Load("skull.obj");
+    //scene.AddObject(std::move(model));
+    scene.AddObject(std::move(triangle));
     scene.Render(framebuffer, camera, 10, 10);
     framebuffer.Update();
     

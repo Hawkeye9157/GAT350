@@ -1,6 +1,7 @@
 #include "Model.h"
 #include "Framebuffer.h"
 #include "Camera.h"
+#include "Triangle.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -52,9 +53,18 @@ bool Model::Load(const std::string& filename)
 	return true;
 }
 
-
-
-void Model::Draw(Framebuffer& framebuffer, const glm::mat4& model, const Camera& camera)
+bool Model::Hit(const ray_t& ray, raycastHit_t& raycastHit, float min, float max)
 {
-	//
+	for (size_t i = 0; i < m_vertices.size(); i = i + 3) {
+		Triangle triangle{ (m_vertices[i]),(m_vertices[i + 1]),(m_vertices[i + 2]),m_material};
+		if (triangle.Hit(ray, raycastHit, min, max)) {
+			return true;
+		}
+	}
+
+	return false;
 }
+
+
+
+
