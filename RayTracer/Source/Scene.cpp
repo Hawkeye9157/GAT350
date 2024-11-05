@@ -7,6 +7,13 @@
 #include "ETime.h"
 #include <iostream>
 
+void Scene::Update()
+{
+	for (auto& object : m_objects) {
+		object->Update();
+	}
+}
+
 void Scene::Render(Framebuffer& framebuffer, const Camera& camera,int samples,int depth)
 {
 	Time frametimer;

@@ -40,4 +40,8 @@ public:
 
 		return mxr * glm::vec4{ 1,0,0,0 };
 	}
+
+	glm::vec4 operator * (const glm::vec4& v) {
+		return GetMatrix() * v;
+	}
 };

@@ -34,7 +34,7 @@ color3_t Tracer::Trace(Scene& scene, const ray_t& ray,float minDistance, float m
 
 	glm::vec3 direction = glm::normalize(ray.direction);
 	float t = (direction.y + 1) * 0.5f;
-	color3_t color = Lerp(color3_t{ 1,1,1 }, color3_t{ .5,.5,.5}, t);
+	color3_t color = Lerp(scene.m_skybot, scene.m_skytop, t);
 
 	return color;
 	//return color3_t(randomf(1), randomf(1), randomf(1));

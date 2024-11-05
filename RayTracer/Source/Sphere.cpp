@@ -3,8 +3,25 @@
 
 bool Sphere::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, float maxDistance)
 {
+    float t;
+    if (!Raycast(ray, m_transform.position, radius * m_transform.scale.x, minDistance, maxDistance,t)) return false;
+
+    raycastHit.distance = t;
+    raycastHit.point = ray.At(t);
+    raycastHit.normal = glm::normalize(raycastHit.point - m_center);
+    raycastHit.material = GetMaterial();
+
+    return true;
+
+   
+
+    
+}
+
+bool Sphere::Raycast(const ray_t& ray, const glm::vec3& center, float radius, float min, float max,float& t)
+{
     // Vector from the ray origin to the center of the sphere
-    glm::vec3 oc = ray.origin - m_center;
+    glm::vec3 oc = ray.origin - center;
 
     // Coefficients for the quadratic equation
     // a = dot(ray direction, ray direction), which is the square of the length of the ray direction
@@ -25,24 +42,17 @@ bool Sphere::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, 
 
     if (discriminant >= 0) {
         float t = (-b - sqrt(discriminant)) / (2 * a);
-        if (t >= minDistance && t <= maxDistance) {
-            raycastHit.distance = t;
-            raycastHit.point = ray.At(t);
-            raycastHit.normal = glm::normalize(raycastHit.point - m_center);
-            raycastHit.material = GetMaterial();
+        if (t >= min && t <= max) {
+           
 
             return true;
         }
-         t = (-b + sqrt(discriminant)) / (2 * a);
-        if (t >= minDistance && t <= maxDistance) {
-            raycastHit.distance = t;
-            raycastHit.point = ray.At(t);
-            raycastHit.normal = glm::normalize(raycastHit.point - m_center);
-            raycastHit.material = GetMaterial();
+        t = (-b + sqrt(discriminant)) / (2 * a);
+        if (t >= min && t <= max) {
+            
 
             return true;
         }
     }
-
     return false;
 }
