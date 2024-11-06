@@ -17,7 +17,6 @@ color3_t Tracer::Trace(Scene& scene, const ray_t& ray,float minDistance, float m
 		if (object->Hit(ray,raycastHit,minDistance,closestDistance)) {
 			isHit = true;
 			closestDistance = raycastHit.distance;
-			raycastHit.material = object.get()->GetMaterial();
 			
 		}
 	}

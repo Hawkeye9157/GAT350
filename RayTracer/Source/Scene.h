@@ -20,5 +20,5 @@ public:
 private:
 	std::vector < std::unique_ptr<class SceneObject>> m_objects;
 	color3_t m_skybot{ 1 };
-	color3_t m_skytop{ .5f,.5f,.5f };
+	color3_t m_skytop{ .7f,.2f,.3f };
 };

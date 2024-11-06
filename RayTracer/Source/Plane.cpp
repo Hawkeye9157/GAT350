@@ -21,7 +21,7 @@ bool Plane::Raycast(const ray_t& ray, const glm::vec3& point, const glm::vec3& n
     if (approx(denominator, 0)) {
         return false;
     }
-    t = dot(point - ray.origin, normal);
+    t = glm::dot(point - ray.origin, normal) / denominator;
     if (t < 0) {
         return false;
     }

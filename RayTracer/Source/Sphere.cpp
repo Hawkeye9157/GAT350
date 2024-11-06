@@ -8,7 +8,7 @@ bool Sphere::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, 
 
     raycastHit.distance = t;
     raycastHit.point = ray.At(t);
-    raycastHit.normal = glm::normalize(raycastHit.point - m_center);
+    raycastHit.normal = glm::normalize(raycastHit.point - m_transform.position);
     raycastHit.material = GetMaterial();
 
     return true;
@@ -41,7 +41,7 @@ bool Sphere::Raycast(const ray_t& ray, const glm::vec3& center, float radius, fl
     float discriminant = (b * b) - (4 * a * c);
 
     if (discriminant >= 0) {
-        float t = (-b - sqrt(discriminant)) / (2 * a);
+         t = (-b - sqrt(discriminant)) / (2 * a);
         if (t >= min && t <= max) {
            
 

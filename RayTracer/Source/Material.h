@@ -52,5 +52,5 @@ public:
 protected:
 	//I aint typeing All that
 	//imagine being named Snell, couldn't be me
-	float m_ri = 0;
+	float m_ri = 1;
 };

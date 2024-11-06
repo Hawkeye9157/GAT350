@@ -43,7 +43,7 @@
 	}
 
 	inline bool approx(float v1, float v2) {
-		return (std::abs(v2 - v1)) < FLT_EPSILON;
+		return (std::fabs(v1 - v2)) < FLT_EPSILON;
 	}
 
 	inline float Dot(const glm::vec3& v1, const glm::vec3& v2) {
