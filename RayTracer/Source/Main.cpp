@@ -25,6 +25,7 @@
 
 void InitScene(Scene& scene);
 static void InitScene01(Scene& scene, Camera& camera);
+void InitCornell(Scene& scene, Camera& camera);
 
 
 int main(int argc, char* argv[])
@@ -44,10 +45,11 @@ int main(int argc, char* argv[])
     Camera camera{ 70.0f,800.0f / 600.0f };
     camera.SetView({ 0,0,-20 }, { 0,0,0 });
     Scene scene;
-   InitScene01(scene,camera);
+   //InitScene01(scene,camera);
+   InitCornell(scene,camera);
 
     scene.Update();
-    scene.Render(framebuffer, camera, 200, 200);
+    scene.Render(framebuffer, camera, 1000, 1000);
     framebuffer.Update();
     
 #pragma endregion
@@ -128,12 +130,13 @@ static void InitScene01(Scene& scene, Camera& camera)
     camera.SetFOV(20.0f);
     camera.SetView({ 13, 2, 3 }, { 0, 0, 0 });
 
-   // auto ground_material = std::make_shared<Lambertian>(color3_t(0.5f));
-    //scene.AddObject(std::make_unique<Plane>(Transform{ glm::vec3{ 0 } }, ground_material));
+    auto ground_material = std::make_shared<Lambertian>(color3_t(0.5f));
+    auto green_material = std::make_shared<Lambertian>(color3_t(0,0,1));
+    scene.AddObject(std::make_unique<Plane>(Transform{ glm::vec3{ 0 } }, ground_material));
 
-    std::shared_ptr<Material> mat = std::make_shared<Lambertian>(color3_t{ 0.5f,0.5f,0.5f });
+    /*std::shared_ptr<Material> mat = std::make_shared<Lambertian>(color3_t{ 0.5f,0.5f,0.5f });
     auto plane = std::make_unique<Plane>(Transform{ glm::vec3{0} }, mat);
-    scene.AddObject(std::move(plane));
+    scene.AddObject(std::move(plane));*/
 
     
     for (int a = -11; a < 11; a++) {
@@ -175,4 +178,34 @@ static void InitScene01(Scene& scene, Camera& camera)
     auto material3 = std::make_shared<Metal>(color3_t(0.7f, 0.6f, 0.5f), 0.0f);
     scene.AddObject(std::make_unique<Sphere>(Transform{ glm::vec3{ 4, 1, 0 } }, 1.0f, material3));
     
+}
+void InitCornell(Scene& scene, Camera& camera) {
+    //camera
+    camera.SetFOV(60.0f);
+    camera.SetView({ 13, 2, 0 }, { 0, 0, 0 });
+
+    //floor
+    auto ground_material = std::make_shared<Lambertian>(color3_t(0.75f));
+    auto green_material = std::make_shared<Lambertian>(color3_t(0,1,0));
+    auto red_material = std::make_shared<Lambertian>(color3_t(1,0,0));
+    auto roof_material = std::make_shared<Emissive>(color3_t(0.9f),15.0f);
+    auto sphere_material = std::make_shared<Dielectric>(color3_t(.5f), 1.33f);
+    auto sphere_material2 = std::make_shared<Metal>(color3_t(.7f, .3f, .5f), 1.33f);
+
+    scene.AddObject(std::make_unique<Plane>(Transform{ glm::vec3{ 0,-30,0 } }, ground_material));
+    //walls
+    scene.AddObject(std::make_unique<Plane>(Transform{ glm::vec3{0,0,-40},glm::vec3{90,0,0} }, red_material)); // left wall
+    scene.AddObject(std::make_unique<Plane>(Transform{ glm::vec3{0,0,40},glm::vec3{-90,0,0} }, green_material)); // right wall
+
+    scene.AddObject(std::make_unique<Plane>(Transform{ glm::vec3{ -75,0,0 },glm::vec3{0,0,-90} }, ground_material));
+
+    //roof
+    scene.AddObject(std::make_unique<Plane>(Transform{ glm::vec3{0,40,0},glm::vec3{0,0,8},glm::vec3{-1} }, ground_material));
+
+    //light
+    scene.AddObject(std::make_unique<Sphere>(Transform{ glm::vec3{0,9,0},glm::vec3{0} }, 4.3f, roof_material));
+
+    //sphere
+    scene.AddObject(std::make_unique<Sphere>(Transform{ glm::vec3{0} }, 1.0f, sphere_material));
+    scene.AddObject(std::make_unique<Sphere>(Transform{ glm::vec3{3,-2,-5} }, 1.0f, sphere_material2));
 }
