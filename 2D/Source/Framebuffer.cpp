@@ -17,6 +17,7 @@ Framebuffer::Framebuffer(const Renderer& renderer, int width, int height)
 		std::cerr << "Error creating Texture: " << SDL_GetError() << std::endl;
 	}
 	m_buffer.resize(m_width * m_height);
+	m_depth.resize(100); //change later
 }
 
 Framebuffer::~Framebuffer()

@@ -1,4 +1,5 @@
 #pragma once
+#include "glm/glm.hpp"
 
 	template<typename T>
 	inline T Lerp(const T& a, const T& b, float t) { return static_cast<T>(a + (t * (b - a))); };
@@ -28,3 +29,7 @@
 
 	template<typename T>
 	inline T Clamp(const T& value, const T& min, const T& max) { return (value < min) ? min : (value > max) ? max : value; };
+
+	inline float cross(const glm::vec2& a, const glm::vec2& b) {
+		return glm::cross(glm::vec3{ a.x,a.y,0 }, glm::vec3{b.x,b.t,0}).z;
+	}

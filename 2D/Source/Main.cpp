@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "Actor.h"
 #include "Random.h"
+#include "Shader.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
@@ -30,10 +31,10 @@ int main(int argc, char* argv[])
 
     Framebuffer framebuffer(*renderer, 800, 600);
     Camera camera(800, 600);
-    camera.SetView(glm::vec3{0,0,-5},glm::vec3{0});
+    camera.SetView(glm::vec3{0,0,-20},glm::vec3{0});
     camera.Setprojection(90.0f,800.0f / 600.0f,0.1f,200.0f);
-    Transform cameraTransform{ {0,0,-50} };
-    cameraTransform.rotation = { 90,90,90 };
+    Transform cameraTransform{ {0,0,0} };
+    cameraTransform.rotation = { 0,0,0 };
 
     Input input;
     input.Initialize();
@@ -57,16 +58,28 @@ int main(int argc, char* argv[])
     
 #pragma endregion
 
+    Shader::uniforms.view = camera.GetView();
+    Shader::uniforms.proj = camera.GetProjection();
+    Shader::uniforms.ambient = color3_t{ 0.2,0,0.3 };
+
+    Shader::uniforms.light.direction = glm::vec3{ 0, -1, 0 }; // light pointing down
+    Shader::uniforms.light.color = color3_t{ 1 }; // white light
+    Shader::uniforms.light.position = glm::vec3{ 10, 10, -10 };
+    Shader::uniforms.light.directional = false; //point light
+
+    Shader::framebuffer = &framebuffer;
+
     std::shared_ptr<Model> model = std::make_shared<Model>();
     //model->Load("sword.obj");
-    model->Load("skull.obj");
-    //model->Load("cube-2.obj");
+    //model->Load("models/skull.obj");
+    model->Load("models/cube.obj");
+    model->SetColor(glm::vec4{1,0,0,1});
 
     std::vector<std::unique_ptr<Actor>> actors;
 
     for (int i = 0; i < 1; i++) {
         //Transform transform{ {randomf(-10.0f,10.0f),randomf(-10.0f,10.0f),randomf(-10.0f,10.0f)},{0,0,15},{1,1,1}};
-        Transform transform{ {100,100,10},{0,0,15},{1,1,1} };
+        Transform transform{ {0,0,0},{0,0,0},{1,1,1} };
         std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, model);
         actors.push_back(std::move(actor));
     }
@@ -131,8 +144,8 @@ int main(int argc, char* argv[])
             if (input.GetKeyDown(SDL_SCANCODE_K)) { direction.z = -1; }
             if (input.GetKeyDown(SDL_SCANCODE_L)) { direction.z = 1; }
 
-            cameraTransform.rotation.y += input.GetMousePositionDelta().x * 0.25;
-            cameraTransform.rotation.x += input.GetMousePositionDelta().y * 0.25;
+            cameraTransform.rotation.y += input.GetMousePositionDelta().x * 0.25f;
+            cameraTransform.rotation.x += input.GetMousePositionDelta().y * 0.25f;
 
             glm::vec3 offset = cameraTransform.GetMatrix() * glm::vec4{ direction,0 };
 
@@ -143,11 +156,11 @@ int main(int argc, char* argv[])
         }
         
         camera.SetView(cameraTransform.position, cameraTransform.position + cameraTransform.GetForward());
+        Shader::uniforms.view = camera.GetView();
         //camera.SetView(cameraTransform.position, cameraTransform.position + glm::vec3{0,0,1});
 
         for (auto& actor : actors) {
-            actor->SetColor({(uint8_t)randomf(255.0f),(uint8_t)randomf(255.0f),(uint8_t)randomf(255.0f),255});
-            actor->Draw(framebuffer, camera);
+            actor->Draw();
         }
 #pragma endregion
        

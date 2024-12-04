@@ -29,6 +29,8 @@ public:
 	void DrawImage(int x, int y, const class Image& image);
 
 	std::vector<color_t>& GetBuffer() { return m_buffer; };
+	std::vector<float>& GetDepth() { return m_depth; };
+	
 
 private:
 	void DrawBresCircle(int xc, int yc, int x, int y, const color_t& color);
@@ -44,6 +46,7 @@ public:
 
 	SDL_Texture* m_texture{ nullptr };
 	std::vector<color_t> m_buffer;
+	std::vector<float> m_depth;
 
 private:
 	const int INSIDE = 0;
